@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns="http://tutorialacademy.com/2015/jena#">
+  <rdf:Description rdf:about="http://tutorialacademy.com/2015/jena#Bill">
+    <teaches rdf:resource="http://tutorialacademy.com/2015/jena#Math"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://tutorialacademy.com/2015/jena#John">
+    <hasClass rdf:resource="http://tutorialacademy.com/2015/jena#Math"/>
+  </rdf:Description>
+</rdf:RDF>
