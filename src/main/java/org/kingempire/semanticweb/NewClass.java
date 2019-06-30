@@ -6,11 +6,13 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.jena.query.ResultSet;
+import org.apache.jena.query.ResultSetFormatter;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.riot.RDFFormat;
 import org.kingempire.semanticweb.rdf.RDFOperations;
 import org.kingempire.semanticweb.reasoning.JenaReasoningWithRules;
+import org.kingempire.semanticweb.sparql.SPARQLQueryType;
 import org.kingempire.semanticweb.sparql.SparqlQueryRunner;
 
 /**
@@ -30,7 +32,49 @@ public class NewClass {
     public static void main(String[] args) throws IOException {
 
         NewClass o = new NewClass();
-        o.f12();
+        o.tt1();
+//        o.f2();
+    }
+
+    public void tt1() throws IOException {
+        String data = "C:\\Users\\Anurag Singh\\OneDrive\\cfiles\\rdf\\data.ttl";
+        Model m1 = o1.readRDF(data, "TTL");
+        m1.write(System.out, "N3");
+
+        String p = "PREFIX pr: <http://example.com/profession#>\n"
+                + "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
+                + "PREFIX ppl: <http://example.org/people#>\n"
+                + "PREFIX foaf: <http://xmlns.com/foaf/0.1/>\n";
+
+        String q = "SELECT ?x\n"
+                + " WHERE {\n"
+                + " ?x rdf:type pr:Professor\n"
+                + " }";
+
+        String q2 = "SELECT ?name ?phone\n"
+                + " WHERE {\n"
+                + " ppl:Bob foaf:name ?name .\n"
+                + " ppl:Bob foaf:phone ?phone .\n"
+                + " }";
+
+        ResultSet rs = o2.runOneSelectQuery(m1, (p + q));
+        ResultSetFormatter.out(System.out, rs);
+
+        System.out.println();
+        System.out.println("*******************************");
+        System.out.println();
+
+        ResultSet rs1 = o2.runSparqlQuery(m1, (p + q), SPARQLQueryType.SELECT, ResultSet.class);
+        ResultSetFormatter.out(System.out, rs1);
+    }
+
+    public void f2() {
+        String dataset = "src/test/resources/dataset.rdf";
+        String rules = "src/test/resources/rules.txt";
+
+        JenaReasoningWithRules obj = new JenaReasoningWithRules();
+        Model mm = obj.doReasoning(dataset, rules);
+        new RDFOperations().printRDF(mm, "N3");
     }
 
     //working
@@ -43,10 +87,10 @@ public class NewClass {
         System.out.println(q);
 
 //        ResultSet rs1 = o2.runOneSelectQuery(m1, q);
-        ResultSet rs1 = o2.runSparqlQuery(m1, q, "SELECT", ResultSet.class);
+        ResultSet rs1 = o2.runSparqlQuery(m1, q, SPARQLQueryType.SELECT, ResultSet.class);
 
         String o = "C:\\Users\\Anurag Singh\\OneDrive\\cfiles\\rdf\\f12.csv";
-        o1.writeResultSetAsCSV(rs1, o);
+        o1.writeResultSet(rs1, o, "csv");
         o1.printResultSet(rs1);
     }
 
@@ -64,7 +108,7 @@ public class NewClass {
         String o = "C:\\Users\\Anurag Singh\\OneDrive\\cfiles\\rdf\\";
         for (int i = 0; i < rs1.size(); i++) {
 
-            o1.writeResultSetAsCSV(rs1.get(i), o + "file_" + i + ".csv");
+            o1.writeResultSet(rs1.get(i), o + "file_" + i + ".csv", "csv");
             o1.printResultSet(rs1.get(i));
         }
     }
@@ -79,7 +123,7 @@ public class NewClass {
         System.out.println(q);
 
 //        Model rs1 = o2.runOneConstructQuery(m1, q);
-        Model rs1 = o2.runSparqlQuery(m1, q, "CONSTRUCT", Model.class);
+        Model rs1 = o2.runSparqlQuery(m1, q, SPARQLQueryType.CONSTRUCT, Model.class);
 
         o1.printRDF(rs1, "N3");
 
@@ -166,12 +210,4 @@ public class NewClass {
 
     }
 
-    public void f2() {
-        String dataset = "src/test/resources/dataset.rdf";
-        String rules = "src/test/resources/rules.txt";
-
-        JenaReasoningWithRules obj = new JenaReasoningWithRules();
-        Model mm = obj.doReasoning(dataset, rules);
-        new RDFOperations().printRDF(mm, "N3");
-    }
 }

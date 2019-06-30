@@ -68,7 +68,7 @@ public class RDFOperations {
         LOG.info("\n-----------------------------------------------------------------------");
     }
 
-    public void IterateRDFModel(Model model) {
+    public void iterateRDFModel(Model model) {
         LOG.info("\n---------------------< Result Displaying >-----------------------------");
         StmtIterator it = model.listStatements();
 
@@ -91,10 +91,25 @@ public class RDFOperations {
         LOG.info("\n-----------------------------------------------------------------------");
     }
 
-    public void writeResultSetAsCSV(ResultSet resultset, String outputFile) throws FileNotFoundException, IOException {
+    public void writeResultSet(ResultSet resultset, String outputFile, String writingFormat) throws FileNotFoundException, IOException {
         try (OutputStream out = new FileOutputStream(outputFile)) {
-            ResultSetFormatter.outputAsCSV(out, resultset);
-            LOG.info("File Writing Done At: " + outputFile);
+            switch (writingFormat.toLowerCase()) {
+                case "csv":
+                    ResultSetFormatter.outputAsCSV(out, resultset);
+                    break;
+                case "tsv":
+                    ResultSetFormatter.outputAsTSV(out, resultset);
+                    break;
+                case "json":
+                    ResultSetFormatter.outputAsJSON(out, resultset);
+                    break;
+                case "xml":
+                    ResultSetFormatter.outputAsXML(out, resultset);
+                    break;
+                default:
+                    LOG.warn("Invalid File Writing Format!");
+            }
+            LOG.info("File Writing Done At: " + outputFile + " In Format: " + writingFormat);
         }
     }
 }
